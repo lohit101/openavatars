@@ -1,7 +1,7 @@
 {
   "name": "@openavatars/react",
   "version": "0.1.0",
-  "description": "The React component for OpenAvatars.",
+  "description": "Private compatibility entry for existing OpenAvatars workspace imports.",
   "type": "module",
   "license": "MIT",
   "sideEffects": false,
@@ -27,5 +27,6 @@
   },
   "peerDependencies": {
     "react": ">=18.0.0"
-  }
+  },
+  "private": true
 }

@@ -1,18 +1,34 @@
 {
   "name": "openavatars",
   "version": "0.1.0",
-  "description": "Little faces. Big personalities. Deterministic, animated SVG avatars for everyone.",
+  "description": "Deterministic, animated SVG avatars for JavaScript and React. One username, one little character.",
   "type": "module",
   "license": "MIT",
   "sideEffects": false,
-  "main": "./dist/index.js",
+  "main": "./dist/cjs/index.js",
   "types": "./dist/index.d.ts",
   "exports": {
     ".": {
-      "types": "./dist/index.d.ts",
-      "import": "./dist/index.js",
-      "default": "./dist/index.js"
-    }
+      "import": {
+        "types": "./dist/index.d.ts",
+        "default": "./dist/index.js"
+      },
+      "require": {
+        "types": "./dist/cjs/index.d.ts",
+        "default": "./dist/cjs/index.js"
+      }
+    },
+    "./react": {
+      "import": {
+        "types": "./dist/react.d.ts",
+        "default": "./dist/react.js"
+      },
+      "require": {
+        "types": "./dist/cjs/react.d.ts",
+        "default": "./dist/cjs/react.js"
+      }
+    },
+    "./package.json": "./package.json"
   },
   "files": [
     "dist",
@@ -20,7 +36,9 @@
     "LICENSE"
   ],
   "scripts": {
-    "build": "tsc -p tsconfig.json"
+    "build": "node ../../scripts/build-package.mjs",
+    "prepack": "npm run build",
+    "prepublishOnly": "npm run build"
   },
   "keywords": [
     "avatar",
@@ -28,6 +46,33 @@
     "generative",
     "animated",
     "profile",
-    "blob"
-  ]
+    "blob",
+    "react",
+    "typescript",
+    "profile-picture",
+    "deterministic"
+  ],
+  "author": "Lohit",
+  "homepage": "https://github.com/lohit101/openavatars#readme",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/lohit101/openavatars.git",
+    "directory": "packages/core"
+  },
+  "bugs": {
+    "url": "https://github.com/lohit101/openavatars/issues"
+  },
+  "module": "./dist/index.js",
+  "publishConfig": {
+    "access": "public",
+    "registry": "https://registry.npmjs.org/"
+  },
+  "peerDependencies": {
+    "react": "^18.0.0 || ^19.0.0"
+  },
+  "peerDependenciesMeta": {
+    "react": {
+      "optional": true
+    }
+  }
 }

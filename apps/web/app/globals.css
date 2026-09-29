@@ -1301,3 +1301,42 @@ span > svg[viewBox='0 0 100 100'] {
     gap: 6px;
   }
 }
+
+.package-install {
+  margin: 18px 0 16px;
+}
+.package-install-command {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 10px 12px 10px 16px;
+  border: 1px solid var(--line);
+  border-radius: 10px;
+  background: #141714;
+}
+.package-install-command code {
+  font-family: var(--font-mono);
+  font-size: 13px;
+  color: #bdce82;
+  overflow-wrap: anywhere;
+}
+.package-install-command .copy-button {
+  position: relative;
+  inset: auto;
+  flex-shrink: 0;
+}
+.package-install p {
+  margin: 8px 0 0;
+  color: var(--dim);
+  font-size: 11px;
+  line-height: 1.6;
+}
+.package-install p a {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+}
+.package-install p a:hover {
+  color: var(--text);
+}

@@ -6,7 +6,7 @@ import './globals.css';
 export const metadata: Metadata = {
   title: 'OpenAvatars — Little faces. Big personalities.',
   description:
-    'Free, open source animated blob avatars. Turn any username into a little character with expressive eyes and a personality of its own.',
+    'Free, open source animated SVG avatars for JavaScript and React. Install one package, pass a username, and give your app a little character.',
 };
 export default function RootLayout({ children }: Readonly<{ children: React.ReactNode }>) {
   return (

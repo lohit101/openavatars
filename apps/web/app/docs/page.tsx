@@ -7,7 +7,7 @@ import {
   GithubLogo,
   LinkSimple,
 } from '@phosphor-icons/react/dist/ssr';
-import { OpenAvatar } from '@openavatars/react';
+import { OpenAvatar } from 'openavatars/react';
 import {
   DOC_SECTIONS,
   DOC_GROUPS,

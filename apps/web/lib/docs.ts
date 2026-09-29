@@ -1,4 +1,5 @@
 import { SHAPES, EXPRESSIONS, PALETTE } from 'openavatars';
+import { INSTALL_COMMAND, NPM_URL } from './package';
 
 export type DocBlock =
   | { kind: 'paragraph'; text: string }
@@ -48,7 +49,7 @@ export const DOC_SECTIONS: DocSection[] = [
         [
           [
             'A React application',
-            '@openavatars/react',
+            'openavatars/react',
             'A typed component with accessible labels and automatic SVG ID scoping.',
           ],
           [
@@ -64,8 +65,8 @@ export const DOC_SECTIONS: DocSection[] = [
         ],
       ),
       note(
-        'Available from source',
-        'The repository is public and MIT licensed. The package names are not yet published on npm. Use the workspace or install locally packed tarballs as shown below. API examples use your running OpenAvatars instance; no shared production hostname is assumed.',
+        'One package, two entry points',
+        'Install openavatars once. Import the generator from openavatars, or the component from openavatars/react. React is an optional peer dependency: JavaScript-only projects do not need it. The HTTP API is a separate, self-hosted integration.',
       ),
       p(
         'The generator has no runtime dependencies. React is only needed for the React adapter, and Next.js is only needed to run this website and its HTTP endpoint. You can use the library entirely locally, without sending usernames to a service.',
@@ -81,51 +82,72 @@ export const DOC_SECTIONS: DocSection[] = [
     id: 'installation',
     title: 'Installation & quickstart',
     group: 'Get started',
-    description: 'Run the playground, build the packages, or bring them into your app.',
+    description: 'One install for JavaScript, TypeScript, React, and Next.js.',
     blocks: [
-      h('Run the project'),
-      p(
-        'Use Node.js 22 or newer and npm. Run these commands from your terminal. The development command builds both library packages before starting the website at http://localhost:3000.',
-      ),
+      code('Terminal', 'shell', INSTALL_COMMAND),
+      { kind: 'link', label: 'View openavatars on npm', href: NPM_URL },
+      h('Use your preferred package manager'),
       code(
-        'Terminal',
+        'pnpm, Yarn, or Bun',
         'shell',
-        `git clone https://github.com/lohit101/openavatars.git
-cd openavatars
-npm install
-npm run dev`,
+        `pnpm add openavatars
+# or
+yarn add openavatars
+# or
+bun add openavatars`,
+      ),
+      h('React quickstart'),
+      code(
+        'ProfileAvatar.tsx',
+        'tsx',
+        `import { OpenAvatar } from 'openavatars/react';
+
+export function ProfileAvatar() {
+  return <OpenAvatar name="jamie" size={48} />;
+}`,
       ),
       p(
-        'The playground, documentation, and SVG endpoint all run together. No database, API keys, accounts, or environment variables are needed. Changes to the Next.js application reload automatically; after changing library source, rerun npm run build:packages or restart npm run dev.',
+        'Use React 18 or 19 in your application. The same package includes the React component; there is no second avatar package or stylesheet to install. For a new React project, install react and react-dom too. TypeScript React projects should include the matching @types/react and @types/react-dom development dependencies.',
       ),
-      h('Use the packages in a separate project'),
+      h('JavaScript or TypeScript'),
+      code(
+        'avatar.ts',
+        'typescript',
+        `import { renderAvatarSvg } from 'openavatars';
+
+const svg = renderAvatarSvg('jamie', { size: 64, animate: false });`,
+      ),
       p(
-        'Until npm publication, build and pack both packages in the cloned repository. This produces two versioned .tgz files in the repository root.',
+        'The root entry point has zero runtime dependencies and does not import React or browser APIs. Generate SVG strings locally, on a server, in a worker, or in any framework. Both entry points ship ESM, CommonJS, and TypeScript declarations.',
+      ),
+      h('CommonJS'),
+      code(
+        'avatar.cjs',
+        'javascript',
+        `const { renderAvatarSvg } = require('openavatars');
+const svg = renderAvatarSvg('jamie', { animate: false });`,
+      ),
+      h('Run the playground or install a local build'),
+      p(
+        'Contributors need Node.js 22 or newer. Cloning the repository is optional for package users. The following builds the website and produces one installable archive in artifacts/npm.',
       ),
       code(
         'In the OpenAvatars repository',
         'shell',
-        `npm run build:packages
-npm pack -w openavatars
-npm pack -w @openavatars/react`,
-      ),
-      p(
-        'Copy those two archives to your application directory, then install them together. The React adapter depends on the core package, so installing both local archives in one command avoids attempting to resolve the unpublished core package from npm. For a JavaScript-only integration, install just the core archive.',
+        `git clone https://github.com/lohit101/openavatars.git
+cd openavatars
+npm ci
+npm run dev
+# In another terminal, from the repository root:
+npm run pack:package`,
       ),
       code(
-        'In your application, beside the copied archives',
+        'In your application',
         'shell',
-        `npm install ./openavatars-0.1.0.tgz ./openavatars-react-0.1.0.tgz`,
+        `npm install /path/to/openavatars/artifacts/npm/openavatars-0.1.0.tgz`,
       ),
       p(
-        'The React adapter needs React 18 or later in your application. Both packages ship ESM JavaScript and TypeScript declarations. There is no CSS file to import: each rendered SVG contains its own gradients and animation styles.',
-      ),
-      h('Build for production'),
-      code(
-        'Terminal',
-        'shell',
-        `npm run build
-npm start`,
+        'This single archive includes the generator, React subpath, declarations, README, and MIT license. It needs no workspace link, Git dependency, Next.js installation, or postinstall build. To run a production copy of the playground, use npm run build followed by npm start in the repository.',
       ),
     ],
   },
@@ -138,7 +160,7 @@ npm start`,
       code(
         'ProfileAvatar.tsx',
         'tsx',
-        `import { OpenAvatar } from '@openavatars/react';
+        `import { OpenAvatar } from 'openavatars/react';
 
 export function ProfileAvatar() {
   return <OpenAvatar name="jamie" size={48} />;
@@ -150,7 +172,7 @@ export function ProfileAvatar() {
       code(
         'An avatar beside a name',
         'tsx',
-        `import { OpenAvatar } from '@openavatars/react';
+        `import { OpenAvatar } from 'openavatars/react';
 
 export function TeamMember() {
   return (
@@ -209,7 +231,7 @@ export function TeamMember() {
         ],
       ),
       p(
-        'OpenAvatarProps is exported from @openavatars/react. Shape, Expression, and AvatarOptions are also re-exported there. DOM event handlers and arbitrary HTML attributes are not forwarded; put interactive behavior on a surrounding button or link.',
+        'OpenAvatarProps is exported from openavatars/react. Shape, Expression, and AvatarOptions are also re-exported there. DOM event handlers and arbitrary HTML attributes are not forwarded; put interactive behavior on a surrounding button or link.',
       ),
     ],
   },
@@ -439,6 +461,7 @@ const svg = renderAvatarSvg('jamie', inlineOptions);`,
         'Build your own trait controls',
         'typescript',
         `import { SHAPES, EXPRESSIONS, PALETTE } from 'openavatars';
+import { INSTALL_COMMAND, NPM_URL } from './package';
 import type { Shape, Expression } from 'openavatars';
 
 const availableShapes: readonly Shape[] = SHAPES;
@@ -782,9 +805,12 @@ npm start`,
         [
           [
             'packages/core',
-            'The pure TypeScript generator. No browser, React, or runtime dependencies.',
+            'The published openavatars package: dependency-free generator and optional React subpath.',
           ],
-          ['packages/react', 'The React component and its TypeScript props.'],
+          [
+            'packages/react',
+            'Private compatibility adapter for earlier workspace imports; not a separate npm install.',
+          ],
           ['apps/web', 'The Next.js playground, documentation, and SVG endpoint.'],
           ['tests', 'Chromium and WebKit integration tests and visual review artifacts.'],
         ],
@@ -803,7 +829,7 @@ npm run test:e2e`,
         'Keep v1 identity mapping stable. A change to hashing, random-value order, normalization, silhouette geometry, or eye geometry may change existing avatars. Add regression coverage and explicit versioning when a change is intentional. Review every shape and expression at small sizes as well as at profile size.',
       ),
       p(
-        'For package releases, build both packages, inspect the contents with npm pack --dry-run, and test the local archives in a separate consumer project. Public publication requires registry access and package-name availability. Cloning or deploying the website does not publish packages.',
+        'Run npm run release:check before publishing. This builds and packs openavatars, then verifies the archive in isolated JavaScript, CommonJS, TypeScript, React 18, and React 19 consumers. npm run pack:package saves the archive and file manifest in artifacts/npm. Maintainers can run npm run release:publish after npm login. See RELEASING.md for the first release and subsequent versions.',
       ),
       {
         kind: 'link',
@@ -825,7 +851,15 @@ npm run test:e2e`,
     blocks: [
       h('npm cannot find openavatars'),
       p(
-        'The packages are not published yet. Clone the repository and use the local tarball installation steps. Install the core and React archives together, and ensure your application already has a compatible React version.',
+        'Check that your registry is https://registry.npmjs.org/ and try npm install openavatars@latest. If you use a company registry, it may need to proxy the public npm package. Local tarball installation is also available in the installation section. The React import is openavatars/react, which is a subpath inside openavatars; do not run npm install openavatars/react or install the old workspace adapter name.',
+      ),
+      h('Cannot resolve react/jsx-runtime'),
+      p(
+        'The React component requires React 18 or 19 in your app. Install react and react-dom, or use renderAvatarSvg from the root openavatars entry if your app does not use React.',
+      ),
+      h('TypeScript cannot resolve openavatars/react'),
+      p(
+        'Use moduleResolution: Bundler with a bundler, or NodeNext with NodeNext modules in Node.js projects. These modes understand package subpath exports. Install matching React type packages when using TSX. CommonJS TypeScript consumers can use .cts files with NodeNext resolution.',
       ),
       h('My avatar is not moving'),
       p(

@@ -1,8 +1,9 @@
 'use client';
 
 import Link from 'next/link';
+import { INSTALL_COMMAND, NPM_URL } from '../lib/package';
 import { useState, useEffect, useRef, useSyncExternalStore } from 'react';
-import { OpenAvatar } from '@openavatars/react';
+import { OpenAvatar } from 'openavatars/react';
 import {
   generateAvatar,
   renderAvatarSvg,
@@ -170,7 +171,7 @@ export default function Playground() {
     ...(color ? [`  color="${color}"`] : []),
   ];
   const snippets: Record<CodeTab, string> = {
-    React: `import { OpenAvatar } from "@openavatars/react";\n\n<OpenAvatar\n${props.join('\n')}\n/>`,
+    React: `import { OpenAvatar } from "openavatars/react";\n\n<OpenAvatar\n${props.join('\n')}\n/>`,
     JavaScript: `import { renderAvatarSvg } from "openavatars";\n\nconst svg = renderAvatarSvg(\n  ${JSON.stringify(effectiveName)},\n  ${JSON.stringify({ size: 128, ...options }, null, 2).replace(/\n/g, '\n  ')}\n);`,
     'Image URL': `<img\n  src="${apiUrl.replace(/&/g, '&amp;').replace(/"/g, '&quot;')}"\n  width="128"\n  height="128"\n  alt="Profile avatar"\n/>`,
   };
@@ -397,6 +398,19 @@ export default function Playground() {
               </span>
               <span className="mono">YourAvatar.tsx</span>
             </div>
+            {codeTab !== 'Image URL' && (
+              <div className="package-install">
+                <div className="package-install-command">
+                  <code>{INSTALL_COMMAND}</code>
+                  <CopyButton value={INSTALL_COMMAND} label="Copy install command" />
+                </div>
+                <p>
+                  <a href={NPM_URL} target="_blank" rel="noreferrer">
+                    One package. JavaScript + React. <ArrowUpRight size={12} />
+                  </a>
+                </p>
+              </div>
+            )}
             <div className="code-panel">
               <div className="code-tabs" role="tablist" aria-label="Integration language">
                 {(['React', 'JavaScript', 'Image URL'] as const).map((tab) => (
@@ -449,7 +463,7 @@ export default function Playground() {
               <br className="desktop-break" /> brings back the same face. No account. No API key.
             </p>
             <Link href="/docs" className="docs-link">
-              Make yourself at home <ArrowRight size={15} />
+              Installation & docs <ArrowRight size={15} />
             </Link>
             <div className="trait-readout">
               <span>THIS LITTLE FRIEND</span>
@@ -640,7 +654,9 @@ export default function Playground() {
                 <p>
                   The source includes the core library, React component, and this Next.js website.
                   Run <code>npm install</code> and <code>npm run dev</code> at the repository root.
-                  Packages are available in the workspace; public npm publication is pending.
+                  Or add avatars directly to your app with <code>npm install openavatars</code>.
+                  Import the component from <code>openavatars/react</code>, or use the JavaScript
+                  generator.
                 </p>
               </details>
             </div>

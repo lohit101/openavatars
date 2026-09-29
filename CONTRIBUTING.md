@@ -10,10 +10,13 @@ Before submitting a change:
 
 ```sh
 npm run check
+npm run test:package
 npx playwright install chromium webkit
 npm run test:e2e
 ```
 
 Review the generated contact sheet and desktop/mobile screenshots under `artifacts/`. Pay particular attention to eyelid closure, motion-off resting poses, transparent backgrounds, readable small sizes, and reduced-motion behavior. Include screenshots with visual changes.
 
-The provisional `openavatars` and `@openavatars/react` package names have not been published. Package publication requires registry access and verification of names at release time. Build and smoke-test local tarballs before publishing.
+The public package is `openavatars`. Its root entry stays independent of React; the optional component lives at `openavatars/react`. The old `@openavatars/react` directory is a private workspace compatibility adapter. Do not publish it separately.
+
+`npm run pack:package` rebuilds the package and writes its archive and contents manifest to `artifacts/npm`. `npm run test:package` verifies the archive in isolated consumer projects. See [RELEASING.md](RELEASING.md) before publishing a release.

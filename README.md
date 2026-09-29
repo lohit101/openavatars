@@ -4,36 +4,27 @@ Little faces. Big personalities.
 
 Free, open source, animated SVG avatars generated from any username. Ten soft silhouettes, fourteen eye expressions, a pastel palette, and small seeded variations give every name a little character. Use them in apps, dashboards, comment threads, or wherever initials need a friend.
 
-## Run the playground
+[View on npm](https://www.npmjs.com/package/openavatars) · [Release guide](RELEASING.md)
 
-Requires Node.js 22 or newer and npm.
-
-```sh
-npm install
-npm run dev
-```
-
-Open http://localhost:3000, or visit [the developer guide](http://localhost:3000/docs). Type a username, choose a shape or expression, toggle animation, copy an integration snippet, or download the SVG. All live previews are generated locally in your browser.
+## Install
 
 ```sh
-npm run build     # Build both packages and the production website
-npm start         # Serve the production website and API
+npm install openavatars
 ```
 
-## Workspace
+One package includes JavaScript, TypeScript, CommonJS, and React integrations. The generator has **zero runtime dependencies**. React 18 or 19 is an optional peer dependency, required only when importing `openavatars/react`. No CSS imports, API keys, or hosting are needed.
 
-| Package                                 | Purpose                                                |
-| --------------------------------------- | ------------------------------------------------------ |
-| `packages/core` · `openavatars`         | Dependency-free SVG generator and deterministic traits |
-| `packages/react` · `@openavatars/react` | Typed React component with collision-free instance IDs |
-| `apps/web`                              | Next.js playground and public SVG endpoint             |
-
-The package names are provisional and **not published on npm**. Imports below work in this workspace. To use the packages in another project before publication, build them and create local tarballs with `npm pack -w openavatars` and `npm pack -w @openavatars/react`; install both tarballs together in the destination project. The library is ESM and the React adapter supports React 18+.
+```sh
+# Other package managers
+pnpm add openavatars
+yarn add openavatars
+bun add openavatars
+```
 
 ## React
 
 ```tsx
-import { OpenAvatar } from '@openavatars/react';
+import { OpenAvatar } from 'openavatars/react';
 
 <OpenAvatar name="jamie" size={128} />
 
@@ -72,6 +63,15 @@ const svg = renderAvatarSvg('jamie', {
   animate: false,
 });
 ```
+
+## CommonJS
+
+```js
+const { renderAvatarSvg } = require('openavatars');
+const svg = renderAvatarSvg('jamie', { animate: false });
+```
+
+Both entry points include ESM and CommonJS JavaScript with matching TypeScript declarations. Use `moduleResolution: "Bundler"` in bundler projects, or `"NodeNext"` with NodeNext modules for Node.js. React TypeScript applications should include the matching `@types/react` and `@types/react-dom` packages.
 
 ## Options
 
@@ -113,6 +113,33 @@ Self-contained CSS in each SVG animates eyelid clipping, subtle breathing, small
 
 `animate: false` removes animation styles completely and retains the assigned expression at rest. `prefers-reduced-motion: reduce` also restores resting transforms. Browsers can animate the SVG both inline and through `<img>`. Static image processors and non-browser viewers may show only the resting frame; use `animate: false` for predictable static exports.
 
+## Run the playground
+
+Contributing or self-hosting requires Node.js 22 or newer. Package users do not need to clone this repository or install Next.js.
+
+```sh
+git clone https://github.com/lohit101/openavatars.git
+cd openavatars
+npm ci
+npm run dev
+```
+
+Open http://localhost:3000 or the [developer guide](http://localhost:3000/docs). The playground shows copyable installation commands and examples for React, JavaScript, and image URLs.
+
+```sh
+npm run build
+npm start
+```
+
+## Repository
+
+| Location         | Purpose                                                                                    |
+| ---------------- | ------------------------------------------------------------------------------------------ |
+| `packages/core`  | Published `openavatars` package; pure generator and optional `openavatars/react` component |
+| `packages/react` | Private compatibility shim for earlier workspace imports                                   |
+| `apps/web`       | Playground, documentation, and self-hosted SVG endpoint                                    |
+| `scripts`        | Build, package, consumer verification, and release tools                                   |
+
 ## Verify
 
 ```sh
@@ -120,11 +147,12 @@ npm run lint
 npm run typecheck
 npm test
 npm run build
+npm run test:package
 npx playwright install chromium webkit
 npm run test:e2e
 ```
 
-Unit tests cover stable identities, Unicode normalization, overrides, serialization, React IDs, and the API contract. Browser tests cover controls, downloads, mobile layouts, reduced motion, eyelid animation, and standalone image animation in Chromium and WebKit. They generate desktop/mobile screenshots and a 140-combination contact sheet in `artifacts/` for visual review. CI runs the same checks.
+The package check packs the real npm archive and installs it into isolated JavaScript, CommonJS, TypeScript, React 18, and React 19 consumers. Unit tests cover stable identities, Unicode normalization, overrides, serialization, React IDs, and the API contract. Browser tests cover controls, downloads, mobile layouts, reduced motion, eyelid animation, and standalone image animation in Chromium and WebKit. They generate desktop/mobile screenshots and a 140-combination contact sheet in `artifacts/` for visual review. CI runs the same checks.
 
 ## Deploy on Vercel
 
@@ -134,6 +162,15 @@ Unit tests cover stable identities, Unicode normalization, overrides, serializat
 4. Deploy. The playground and `/api/v1/avatar` will share the assigned hostname. No environment variables are required.
 
 The endpoint is ready for hosting, but this source checkout does not create a deployment or publish packages. For a high-traffic deployment, configure Vercel’s traffic controls and monitor function usage within your hosting plan.
+
+## Package releases
+
+```sh
+npm run pack:package    # Build and inspect artifacts/npm/openavatars-0.1.0.tgz
+npm run release:check   # App checks and isolated archive consumers
+```
+
+See [RELEASING.md](RELEASING.md) for publication, npm authentication, versioning, and trusted GitHub Actions publishing. The website and compatibility adapter are private and cannot be accidentally published with the public library.
 
 ## License
 

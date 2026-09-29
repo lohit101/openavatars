@@ -44,12 +44,13 @@ test('documentation search indexes article content and copy buttons work', async
   await expect(nav.getByRole('link')).toHaveCount(14);
   await nav.getByRole('link', { name: 'Installation & quickstart' }).click();
   await expect(page).toHaveURL(/#installation$/);
+  await expect(page.locator('#react')).toContainText("from 'openavatars/react'");
   const example = page.locator('#installation .docs-code-block').first();
   await example.getByRole('button', { name: 'Copy Terminal', exact: true }).click();
   await expect(example.getByRole('status')).toHaveText('Copied!');
   if (browserName === 'chromium')
     expect(await page.evaluate(() => navigator.clipboard.readText())).toContain(
-      'git clone https://github.com/lohit101/openavatars.git',
+      'npm install openavatars',
     );
 });
 

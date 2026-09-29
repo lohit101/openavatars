@@ -15,7 +15,11 @@
     "typecheck": "npm run build:packages && tsc --noEmit -p apps/web/tsconfig.json",
     "lint": "eslint .",
     "check": "npm run lint && npm run typecheck && npm test && npm run build",
-    "test:e2e": "npm run build:packages && playwright test"
+    "test:e2e": "npm run build:packages && playwright test",
+    "pack:package": "node scripts/pack-package.mjs",
+    "test:package": "node scripts/test-package.mjs",
+    "release:check": "npm run check && npm run test:package",
+    "release:publish": "npm run release:check && npm publish -w openavatars --access public"
   },
   "devDependencies": {
     "@playwright/test": "^1.63.0",

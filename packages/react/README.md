@@ -1,16 +1,17 @@
-# @openavatars/react
+# Private React compatibility adapter
 
-A typed React 18+ component for OpenAvatars. MIT licensed.
+This directory keeps earlier workspace imports from `@openavatars/react` working. It is private and is not published to npm.
 
-```tsx
-import { OpenAvatar } from '@openavatars/react';
+The public component is included in the `openavatars` package:
 
-<OpenAvatar name="jamie" size={128} />
-<OpenAvatar name="jamie" shape="cloud" expression="wink" animate={false} />
+```sh
+npm install openavatars
 ```
 
-The same username consistently generates the same character. Override `shape`, `expression`, or `color` independently. `animate` defaults to `true`; `false` restores the resting pose while preserving the expression. Reduced-motion preferences are respected automatically.
+```tsx
+import { OpenAvatar } from 'openavatars/react';
 
-Use `label` for a custom accessible description or `decorative` when adjacent text already identifies the avatar. `className` and `style` apply to the wrapping span. SVG identifiers are scoped with React `useId`, including during server rendering.
+<OpenAvatar name="jamie" size={48} />;
+```
 
-Requires `openavatars` and a React peer dependency. This package is currently developed in the OpenAvatars workspace; public npm publication is pending.
+See the [package README](../core/README.md) for all props and supported environments.

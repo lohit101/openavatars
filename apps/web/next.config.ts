@@ -1,6 +1,6 @@
 import type { NextConfig } from 'next';
 const config: NextConfig = {
-  transpilePackages: ['openavatars', '@openavatars/react'],
+  transpilePackages: ['openavatars'],
   poweredByHeader: false,
   devIndicators: false,
 };

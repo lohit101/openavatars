@@ -18,6 +18,12 @@ test('typing, overrides, reset, motion, and downloads work together', async ({
   page.on('pageerror', (error) => errors.push(error.message));
   await page.goto('/');
   await page.getByLabel('Let’s find your little friend').fill('fern');
+  await expect(page.locator('.package-install-command')).toContainText('npm install openavatars');
+  await expect(page.locator('.package-install a')).toHaveAttribute(
+    'href',
+    'https://www.npmjs.com/package/openavatars',
+  );
+  await expect(page.locator('#integration-code')).toContainText('openavatars/react');
   const avatar = page.locator('.hero-avatar svg');
   await expect(avatar).toHaveAccessibleName('Avatar for fern');
   await page.getByRole('button', { name: 'Copy code', exact: true }).click();
@@ -38,6 +44,7 @@ test('typing, overrides, reset, motion, and downloads work together', async ({
   const download = await downloading;
   expect(download.suggestedFilename()).toBe('openavatar-fern.svg');
   await page.getByRole('tab', { name: 'Image URL' }).click();
+  await expect(page.getByRole('button', { name: 'Copy install command' })).toHaveCount(0);
   await expect(page.locator('#integration-code')).toContainText('/api/v1/avatar?name=fern');
   await page.getByLabel('Let’s find your little friend').fill('');
   await expect(avatar).toHaveAccessibleName('Avatar for someone');
