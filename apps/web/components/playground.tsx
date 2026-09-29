@@ -25,6 +25,7 @@ import {
   X,
   Code,
   BracketsCurly,
+  GithubLogo,
 } from '@phosphor-icons/react';
 
 type CodeTab = 'React' | 'JavaScript' | 'Image URL';
@@ -234,8 +235,14 @@ export default function Playground() {
         <nav aria-label="Main navigation">
           <a href="#collection">The collection</a>
           <a href="#docs">Documentation</a>
-          <a className="nav-source" href="#open-source">
-            Open source <ArrowUpRight size={14} />
+          <a
+            className="nav-source"
+            href="https://github.com/lohit101/openavatars"
+            target="_blank"
+            rel="noreferrer"
+          >
+            <GithubLogo size={17} weight="fill" aria-hidden="true" /> Open source{' '}
+            <ArrowUpRight size={14} />
           </a>
         </nav>
       </header>
@@ -684,7 +691,15 @@ export default function Playground() {
           <span className="footer-dot">.</span>
         </a>
         <p>Made for the people behind the usernames.</p>
-        <span>Open source · MIT licensed</span>
+        <a
+          className="footer-github"
+          href="https://github.com/lohit101/openavatars"
+          target="_blank"
+          rel="noreferrer"
+          aria-label="OpenAvatars on GitHub · MIT licensed"
+        >
+          <GithubLogo size={16} weight="fill" aria-hidden="true" /> GitHub · MIT licensed
+        </a>
       </footer>
       <div className={`toast ${notice ? 'visible' : ''}`} role="status">
         {notice}
