@@ -1,5 +1,6 @@
 'use client';
 
+import Link from 'next/link';
 import { useState, useEffect, useRef, useSyncExternalStore } from 'react';
 import { OpenAvatar } from '@openavatars/react';
 import {
@@ -234,7 +235,7 @@ export default function Playground() {
         </a>
         <nav aria-label="Main navigation">
           <a href="#collection">The collection</a>
-          <a href="#docs">Documentation</a>
+          <Link href="/docs">Documentation</Link>
           <a
             className="nav-source"
             href="https://github.com/lohit101/openavatars"
@@ -447,9 +448,9 @@ export default function Playground() {
               One name is all it takes. The same username always
               <br className="desktop-break" /> brings back the same face. No account. No API key.
             </p>
-            <a href="#docs" className="docs-link">
+            <Link href="/docs" className="docs-link">
               Make yourself at home <ArrowRight size={15} />
-            </a>
+            </Link>
             <div className="trait-readout">
               <span>THIS LITTLE FRIEND</span>
               <dl>
@@ -586,14 +587,9 @@ export default function Playground() {
                 <span>14 expressions</span>
                 <span>Endless character</span>
               </div>
-              <a
-                href="/api/v1/avatar?name=hello&animate=false"
-                target="_blank"
-                rel="noreferrer"
-                className="button-outline"
-              >
-                Try the SVG API <ArrowUpRight size={16} />
-              </a>
+              <Link href="/docs" className="button-outline">
+                Read the documentation <ArrowRight size={16} />
+              </Link>
             </div>
             <div className="docs-reference">
               <h3>A few things to know</h3>

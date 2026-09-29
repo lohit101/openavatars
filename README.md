@@ -13,7 +13,7 @@ npm install
 npm run dev
 ```
 
-Open http://localhost:3000. Type a username, choose a shape or expression, toggle animation, copy an integration snippet, or download the SVG. All live previews are generated locally in your browser.
+Open http://localhost:3000, or visit [the developer guide](http://localhost:3000/docs). Type a username, choose a shape or expression, toggle animation, copy an integration snippet, or download the SVG. All live previews are generated locally in your browser.
 
 ```sh
 npm run build     # Build both packages and the production website
@@ -133,7 +133,7 @@ Unit tests cover stable identities, Unicode normalization, overrides, serializat
 3. Use the Next.js framework preset. The checked-in `apps/web/vercel.json` installs and builds from the workspace root.
 4. Deploy. The playground and `/api/v1/avatar` will share the assigned hostname. No environment variables are required.
 
-The endpoint is ready for hosting, but this source checkout does not create a deployment or publish packages. Repository links are deliberately not shown until an actual public repository exists. For a high-traffic deployment, configure Vercel’s traffic controls and monitor function usage within your hosting plan.
+The endpoint is ready for hosting, but this source checkout does not create a deployment or publish packages. For a high-traffic deployment, configure Vercel’s traffic controls and monitor function usage within your hosting plan.
 
 ## License
 
