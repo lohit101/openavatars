@@ -1,0 +1,31 @@
+{
+  "name": "@openavatars/react",
+  "version": "0.1.0",
+  "description": "The React component for OpenAvatars.",
+  "type": "module",
+  "license": "MIT",
+  "sideEffects": false,
+  "main": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js",
+      "default": "./dist/index.js"
+    }
+  },
+  "files": [
+    "dist",
+    "README.md",
+    "LICENSE"
+  ],
+  "scripts": {
+    "build": "tsc -p tsconfig.json"
+  },
+  "dependencies": {
+    "openavatars": "^0.1.0"
+  },
+  "peerDependencies": {
+    "react": ">=18.0.0"
+  }
+}
