@@ -4,7 +4,7 @@ Little faces. Big personalities.
 
 Free, open source, animated SVG avatars generated from any username. Ten soft silhouettes, fourteen eye expressions, a pastel palette, and small seeded variations give every name a little character. Use them in apps, dashboards, comment threads, or wherever initials need a friend.
 
-[View on npm](https://www.npmjs.com/package/openavatars) · [Release guide](RELEASING.md)
+[View on npm](https://www.npmjs.com/package/openavatars) · [Changelog](CHANGELOG.md) · [Release guide](RELEASING.md)
 
 ## Install
 
@@ -20,6 +20,16 @@ pnpm add openavatars
 yarn add openavatars
 bun add openavatars
 ```
+
+## Upgrade an application
+
+Read the [changelog](CHANGELOG.md), then run this in your application directory:
+
+```sh
+npm install openavatars@latest
+```
+
+Review the generated avatars and your integration before committing the application lockfile. Use `npm install --save-exact openavatars@X.Y.Z` with a tested version when appearance stability matters. The npm package version and the returned algorithm `version: 1` are separate; compatible releases preserve v1 identities. A website deployment does not update the version installed in your app.
 
 ## React
 
@@ -142,17 +152,16 @@ npm start
 
 ## Verify
 
+On macOS, run the complete local check set below. On Linux, use the Chromium commands in [CONTRIBUTING.md](CONTRIBUTING.md) and review the macOS WebKit CI job for Safari coverage.
+
 ```sh
-npm run lint
-npm run typecheck
-npm test
-npm run build
+npm run check
 npm run test:package
 npx playwright install chromium webkit
 npm run test:e2e
 ```
 
-The package check packs the real npm archive and installs it into isolated JavaScript, CommonJS, TypeScript, React 18, and React 19 consumers. Unit tests cover stable identities, Unicode normalization, overrides, serialization, React IDs, and the API contract. Browser tests cover controls, downloads, mobile layouts, reduced motion, eyelid animation, and standalone image animation in Chromium and WebKit. They generate desktop/mobile screenshots and a 140-combination contact sheet in `artifacts/` for visual review. CI runs the full Chromium suite on Ubuntu 24.04 and the full WebKit suite on macOS 15 for Safari coverage. Both jobs are required to pass, including the image animation assertions.
+`npm run check` runs lint, TypeScript, unit tests, and the production build. The package check packs the real npm archive and installs it into isolated JavaScript, CommonJS, TypeScript, React 18, and React 19 consumers. Unit tests cover stable identities, Unicode normalization, overrides, serialization, React IDs, and the API contract. Browser tests cover controls, downloads, mobile layouts, hydration, reduced motion, eyelid animation, and standalone image animation in Chromium and WebKit. They generate desktop/mobile screenshots and a 140-combination contact sheet in `artifacts/` for visual review. CI runs the full Chromium suite on Ubuntu 24.04 and the full WebKit suite on macOS 15 for Safari coverage. Both jobs must pass, including the image animation assertions. See [CONTRIBUTING.md](CONTRIBUTING.md) for platform-specific commands and failure trace inspection.
 
 ## Deploy on Vercel
 
@@ -166,11 +175,13 @@ The endpoint is ready for hosting, but this source checkout does not create a de
 ## Package releases
 
 ```sh
-npm run pack:package    # Build and inspect artifacts/npm/openavatars-0.1.0.tgz
+npm run pack:package    # Build and inspect the versioned archive in artifacts/npm
 npm run release:check   # App checks and isolated archive consumers
 ```
 
-See [RELEASING.md](RELEASING.md) for publication, npm authentication, versioning, and trusted GitHub Actions publishing. The website and compatibility adapter are private and cannot be accidentally published with the public library.
+`release:check` and `release:publish` do not run E2E tests. Review both browser CI jobs for the release commit before publishing. Ordinary pushes and tags run checks; npm publication requires the deliberate CLI command or manual publishing workflow.
+
+The public version comes from `packages/core/package.json`. Align the website and compatibility adapter's `openavatars` dependencies and the lockfile when changing it. Website version labels and archive examples read that manifest automatically. Keep release notes in [CHANGELOG.md](CHANGELOG.md), and follow [RELEASING.md](RELEASING.md) for the complete commit, tag, publication, and verification sequence. The website and compatibility adapter are private npm workspaces. Website deployments and npm releases are separate actions.
 
 ## License
 

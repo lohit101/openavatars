@@ -1,5 +1,5 @@
 import { SHAPES, EXPRESSIONS, PALETTE } from 'openavatars';
-import { INSTALL_COMMAND, NPM_URL } from './package';
+import { INSTALL_COMMAND, NPM_URL, PACKAGE_VERSION } from './package';
 
 export type DocBlock =
   | { kind: 'paragraph'; text: string }
@@ -86,6 +86,9 @@ export const DOC_SECTIONS: DocSection[] = [
     blocks: [
       code('Terminal', 'shell', INSTALL_COMMAND),
       { kind: 'link', label: 'View openavatars on npm', href: NPM_URL },
+      p(
+        `This documentation build uses openavatars ${PACKAGE_VERSION}. Package users can install without cloning the repository. Review the releases and maintenance section when upgrading or contributing.`,
+      ),
       h('Use your preferred package manager'),
       code(
         'pnpm, Yarn, or Bun',
@@ -144,7 +147,7 @@ npm run pack:package`,
       code(
         'In your application',
         'shell',
-        `npm install /path/to/openavatars/artifacts/npm/openavatars-0.1.0.tgz`,
+        `npm install /path/to/openavatars/artifacts/npm/openavatars-${PACKAGE_VERSION}.tgz`,
       ),
       p(
         'This single archive includes the generator, React subpath, declarations, README, and MIT license. It needs no workspace link, Git dependency, Next.js installation, or postinstall build. To run a production copy of the playground, use npm run build followed by npm start in the repository.',
@@ -461,7 +464,7 @@ const svg = renderAvatarSvg('jamie', inlineOptions);`,
         'Build your own trait controls',
         'typescript',
         `import { SHAPES, EXPRESSIONS, PALETTE } from 'openavatars';
-import { INSTALL_COMMAND, NPM_URL } from './package';
+import { INSTALL_COMMAND, NPM_URL, PACKAGE_VERSION } from './package';
 import type { Shape, Expression } from 'openavatars';
 
 const availableShapes: readonly Shape[] = SHAPES;
@@ -797,7 +800,7 @@ npm start`,
     id: 'contributing',
     title: 'Development & contributing',
     group: 'Project',
-    description: 'The workspace, quality checks, and compatibility expectations.',
+    description: 'The workspace, browser checks, and compatibility expectations.',
     blocks: [
       table(
         'Repository structure',
@@ -815,22 +818,52 @@ npm start`,
           ['tests', 'Chromium and WebKit integration tests and visual review artifacts.'],
         ],
       ),
+      p(
+        'On macOS, run both browser projects locally with the commands below. On Linux, use the Chromium commands in the CI reproduction section and review the macOS WebKit job for Safari coverage.',
+      ),
       code(
-        'Run all quality checks',
+        'Complete local checks on macOS',
         'shell',
         `npm run check
+npm run test:package
 npx playwright install chromium webkit
 npm run test:e2e`,
       ),
       p(
-        'npm run check runs ESLint, type checking, unit tests, and the production build. Browser tests cover the playground, docs, motion, reduced motion, standalone SVG images, downloads, and responsive layouts. Screenshots and the 140-combination contact sheet are written to the ignored artifacts directory.',
+        'npm run check runs ESLint, type checking, unit tests, and the production build. npm run test:package installs the actual archive in isolated JavaScript, CommonJS, TypeScript, React 18, and React 19 projects. Browser tests cover the playground, docs, hydration, motion, reduced motion, standalone SVG images, downloads, and responsive layouts. Screenshots and the 140-combination contact sheet are written to the ignored artifacts directory.',
       ),
       p(
         'Keep v1 identity mapping stable. A change to hashing, random-value order, normalization, silhouette geometry, or eye geometry may change existing avatars. Add regression coverage and explicit versioning when a change is intentional. Review every shape and expression at small sizes as well as at profile size.',
       ),
+      h('Reproduce CI on the browser’s native platform'),
       p(
-        'Run npm run release:check before publishing. This builds and packs openavatars, then verifies the archive in isolated JavaScript, CommonJS, TypeScript, React 18, and React 19 consumers. npm run pack:package saves the archive and file manifest in artifacts/npm. Maintainers can run npm run release:publish after npm login. See RELEASING.md for the first release and subsequent versions.',
+        'CI runs the complete Chromium suite on Ubuntu 24.04 and the complete WebKit suite on macOS 15 for Safari coverage. Both jobs must pass, including animation inside images. Build first when using CI=true: Playwright starts the production server in CI and the development server otherwise.',
       ),
+      code(
+        'Ubuntu / Chromium',
+        'shell',
+        `npm ci
+npm run check
+npm run test:package
+npx playwright install --with-deps chromium
+CI=true npm run test:e2e -- --project=chromium`,
+      ),
+      code(
+        'macOS / WebKit',
+        'shell',
+        `npm ci
+npm run build
+npx playwright install webkit
+CI=true npm run test:e2e -- --project=webkit`,
+      ),
+      p(
+        'Open the failing Actions step and download visual-review-chromium or visual-review-webkit. Failure traces are in artifacts/test-results; open a trace with npx playwright show-trace path/to/trace.zip. Diagnose the failed assertion rather than weakening it or ignoring the job’s exit status. Linux WebKit rendering can differ from native macOS WebKit; use macOS to reproduce the Safari CI job.',
+      ),
+      {
+        kind: 'link',
+        label: 'Inspect GitHub Actions runs',
+        href: 'https://github.com/lohit101/openavatars/actions',
+      },
       {
         kind: 'link',
         label: 'Read the contribution guide',
@@ -841,6 +874,92 @@ npm run test:e2e`,
         label: 'Report an issue on GitHub',
         href: 'https://github.com/lohit101/openavatars/issues',
       },
+    ],
+  },
+  {
+    id: 'releases',
+    title: 'Releases & maintenance',
+    group: 'Project',
+    description: 'Upgrade an app, prepare a release, and keep documentation aligned.',
+    blocks: [
+      h('Upgrade your application'),
+      p(
+        'Read the changelog, upgrade in your application directory, and review avatars and integrations before committing its lockfile. A package upgrade does not require changing your stable user IDs. Pin a tested package version when appearance stability matters.',
+      ),
+      code('Upgrade to the latest published version', 'shell', 'npm install openavatars@latest'),
+      code(
+        'Pin the version used by this documentation',
+        'shell',
+        `npm install --save-exact openavatars@${PACKAGE_VERSION}`,
+      ),
+      {
+        kind: 'link',
+        label: 'Read the changelog',
+        href: 'https://github.com/lohit101/openavatars/blob/main/CHANGELOG.md',
+      },
+      h('What is released where?'),
+      table(
+        'Release destinations',
+        ['Change', 'Required action'],
+        [
+          [
+            'Generator, React entry, public metadata, or package README/license',
+            'Prepare and publish a new openavatars version. Published versions cannot be replaced.',
+          ],
+          [
+            'Playground, website docs, or HTTP endpoint',
+            'Review CI and deploy the website. An npm release is needed only if public package contents also change.',
+          ],
+          [
+            'Repository guides, changelog, or CI configuration',
+            'Commit and push the reviewed changes. A Git push does not publish to npm.',
+          ],
+        ],
+      ),
+      h('Prepare the next package version'),
+      {
+        kind: 'list',
+        ordered: true,
+        items: [
+          'Use packages/core/package.json as the public version source. Choose a patch for compatible fixes, a minor for additive features, or a major for breaking API or identity changes. The returned algorithm version: 1 and /api/v1/avatar are separate from npm versions.',
+          'Set the new public version, align the openavatars dependency in apps/web/package.json and packages/react/package.json, and run npm install to refresh package-lock.json. Private workspace versions need not track the public package.',
+          'Update the Unreleased changelog and affected repository, website, and package guides before creating the release commit. The website’s displayed version and archive example read the package manifest automatically.',
+          'Run npm run release:check and review both browser CI jobs for that exact commit. release:check verifies code and the npm archive; it does not run E2E tests.',
+          'Once both CI jobs pass, tag the reviewed commit as vX.Y.Z and publish deliberately through the CLI or the manually triggered trusted workflow. RELEASING.md contains the complete commands and verification steps.',
+        ],
+      },
+      code(
+        'Check and inspect a release without publishing',
+        'shell',
+        `npm run release:check
+npm run pack:package`,
+      ),
+      p(
+        'Artifacts are saved in artifacts/npm. The archive includes the generator, optional React subpath, ESM/CommonJS entry points, declarations, README, and MIT license. The compatibility adapter and website are private workspaces.',
+      ),
+      h('Publish deliberately'),
+      code(
+        'Authenticated maintainer CLI',
+        'shell',
+        `npm login
+npm run release:publish`,
+      ),
+      note(
+        'Pushes and tags do not publish npm packages',
+        'GitHub pushes and pull requests run checks. npm publication happens only through npm run release:publish or a manual run of Publish openavatars. The trusted workflow requires npm configuration and an existing stable vX.Y.Z tag matching the package version. Neither publishing command runs the browser suites; review their CI results first.',
+      ),
+      p(
+        'Verify the exact version and integrity on npm, install it in a separate consumer project, and record the release in the changelog. Deploy the updated website independently. Editing source docs does not replace the README already attached to an immutable npm archive.',
+      ),
+      {
+        kind: 'link',
+        label: 'Follow the complete release guide',
+        href: 'https://github.com/lohit101/openavatars/blob/main/RELEASING.md',
+      },
+      h('Maintain the project between releases'),
+      p(
+        'Keep changes focused, update the relevant docs and changelog with each user-visible change, and review dependency updates with the same checks. Preserve v1 identities and the supported React/TypeScript exports. For motion or layout changes, review the generated contact sheet and responsive screenshots as well as CI. Keep the CI browser platforms and their documented reproduction commands aligned.',
+      ),
     ],
   },
   {

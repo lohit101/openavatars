@@ -95,9 +95,17 @@ Invalid input throws `AvatarValidationError`. Inline SVG prefixes must start wit
 
 ## Documentation and source
 
-[Repository and full guide](https://github.com/lohit101/openavatars#readme) · [Issues](https://github.com/lohit101/openavatars/issues)
+[Repository and full guide](https://github.com/lohit101/openavatars#readme) · [Changelog](https://github.com/lohit101/openavatars/blob/main/CHANGELOG.md) · [Issues](https://github.com/lohit101/openavatars/issues)
 
 The repository includes a playground and a full `/docs` page, plus an optional self-hosted SVG HTTP endpoint. Installing this package does not require the website or its server.
+
+## Upgrade and maintenance
+
+Review the [changelog](https://github.com/lohit101/openavatars/blob/main/CHANGELOG.md), then run `npm install openavatars@latest` in your application. Test the integration and commit your application's lockfile. Pin a tested version with `npm install --save-exact openavatars@X.Y.Z` when appearance stability matters; replace `X.Y.Z` with the release you reviewed.
+
+The npm package version is separate from the avatar algorithm's `version: 1`. Compatible releases preserve the same v1 identity mapping. Continue using stable seed names when upgrading.
+
+Contributors can follow the [contribution guide](https://github.com/lohit101/openavatars/blob/main/CONTRIBUTING.md) and [release guide](https://github.com/lohit101/openavatars/blob/main/RELEASING.md). GitHub pushes run checks. npm publication is a deliberate maintainer action; it does not happen automatically on push. Website docs and deployments are maintained separately from the immutable README in each published package archive.
 
 ## License
 

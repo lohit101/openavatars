@@ -2,7 +2,7 @@
 
 import Link from 'next/link';
 import { useHydrated } from '../lib/use-hydrated';
-import { INSTALL_COMMAND, NPM_URL } from '../lib/package';
+import { INSTALL_COMMAND, NPM_URL, PACKAGE_VERSION } from '../lib/package';
 import { useState, useEffect, useRef, useSyncExternalStore } from 'react';
 import { OpenAvatar } from 'openavatars/react';
 import {
@@ -418,7 +418,7 @@ export default function Playground() {
                 </div>
                 <p>
                   <a href={NPM_URL} target="_blank" rel="noreferrer">
-                    One package. JavaScript + React. <ArrowUpRight size={12} />
+                    v{PACKAGE_VERSION} · JavaScript + React. <ArrowUpRight size={12} />
                   </a>
                 </p>
               </div>
@@ -670,10 +670,22 @@ export default function Playground() {
                 </summary>
                 <p>
                   The source includes the core library, React component, and this Next.js website.
-                  Run <code>npm install</code> and <code>npm run dev</code> at the repository root.
-                  Or add avatars directly to your app with <code>npm install openavatars</code>.
-                  Import the component from <code>openavatars/react</code>, or use the JavaScript
+                  Run <code>npm ci</code> and <code>npm run dev</code> at the repository root. Or
+                  add avatars directly to your app with <code>npm install openavatars</code>. Import
+                  the component from <code>openavatars/react</code>, or use the JavaScript
                   generator.
+                </p>
+              </details>
+              <details>
+                <summary>
+                  Keep your project up to date <CaretDown size={15} />
+                </summary>
+                <p>
+                  Read the changelog before upgrading, then run{' '}
+                  <code>npm install openavatars@latest</code> in your app. Pin a tested version when
+                  avatar appearance needs to stay consistent. Our{' '}
+                  <Link href="/docs#releases">release and maintenance guide</Link> covers package
+                  updates, CI checks, and publishing.
                 </p>
               </details>
             </div>

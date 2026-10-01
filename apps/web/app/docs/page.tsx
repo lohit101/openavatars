@@ -19,12 +19,13 @@ import {
 } from '../../lib/docs';
 import { DocsNavigation } from '../../components/docs/navigation';
 import { DocsCodeBlock } from '../../components/docs/code-block';
+import { PACKAGE_VERSION } from '../../lib/package';
 import './docs.css';
 
 export const metadata: Metadata = {
   title: 'Developer documentation — OpenAvatars',
   description:
-    'The complete OpenAvatars developer guide: installation, React and JavaScript integrations, SVG API, options, animation, accessibility, deployment, and troubleshooting.',
+    'The complete OpenAvatars developer guide: installation, React and JavaScript integrations, SVG API, animation, accessibility, deployment, releases, maintenance, and troubleshooting.',
 };
 
 function TraitGallery({ variant }: { variant: 'shapes' | 'expressions' | 'palette' }) {
@@ -177,7 +178,9 @@ export default function DocumentationPage() {
         <main id="docs-content" className="docs-content">
           <div className="docs-introduction">
             <div>
-              <span className="docs-kicker">OPENAVATARS / DEVELOPER GUIDE</span>
+              <span className="docs-kicker">
+                OPENAVATARS / DEVELOPER GUIDE / v{PACKAGE_VERSION}
+              </span>
               <h1>
                 A little character.
                 <br />A few lines of code.
@@ -189,6 +192,9 @@ export default function DocumentationPage() {
                 </a>
                 <a href="#http-api">
                   Use the SVG API <ArrowUpRight size={14} />
+                </a>
+                <a href="#releases">
+                  Releases & maintenance <ArrowRight size={15} />
                 </a>
               </div>
             </div>

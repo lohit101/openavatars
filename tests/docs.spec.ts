@@ -18,10 +18,10 @@ test('documentation is reachable and every section has a working anchor', async 
     .locator('a[href^="#"]')
     .evaluateAll((anchors) => anchors.map((a) => a.getAttribute('href')!.slice(1)));
   for (const id of new Set(links)) await expect(page.locator(`[id="${id}"]`)).toHaveCount(1);
-  await expect(page.locator('[data-doc-section]')).toHaveCount(14);
+  await expect(page.locator('[data-doc-section]')).toHaveCount(15);
   await expect(
     page.getByRole('navigation', { name: 'Documentation sections' }).getByRole('link'),
-  ).toHaveCount(14);
+  ).toHaveCount(15);
   expect(errors).toEqual([]);
 });
 
@@ -41,7 +41,7 @@ test('documentation search indexes article content and copy buttons work', async
   await search.fill('zzzz-no-topic');
   await expect(page.getByText('No matching sections.', { exact: false })).toBeVisible();
   await page.getByRole('button', { name: 'Clear documentation search' }).click();
-  await expect(nav.getByRole('link')).toHaveCount(14);
+  await expect(nav.getByRole('link')).toHaveCount(15);
   await nav.getByRole('link', { name: 'Installation & quickstart' }).click();
   await expect(page).toHaveURL(/#installation$/);
   await expect(page.locator('#react')).toContainText("from 'openavatars/react'");
