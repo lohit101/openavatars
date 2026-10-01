@@ -146,10 +146,21 @@ test('eyelids actually close and disabling animation restores the face', async (
 });
 
 test('API SVG animates inside an image and static output stays still', async ({ page }) => {
-  await page.goto('/');
-  await page.setContent(
-    '<body style="background:#0b0c0c"><img alt="Animated" width="256" height="256" src="/api/v1/avatar?name=motion-test&shape=round&expression=idle"><img alt="Static" width="256" height="256" src="/api/v1/avatar?name=motion-test&shape=round&expression=idle&animate=false"></body>',
+  const errors: string[] = [];
+  page.on('pageerror', (error) => errors.push(error.message));
+  page.on('console', (message) => {
+    if (message.type() === 'error') errors.push(message.text());
+  });
+  await page.emulateMedia({ reducedMotion: 'no-preference' });
+  // A real navigation isolates this document from Next's hydration and dev runtime.
+  // Only the HTML shell is intercepted; both SVGs come from the real API.
+  await page.route('**/__e2e__/svg-images', (route) =>
+    route.fulfill({
+      contentType: 'text/html',
+      body: '<!doctype html><html lang="en"><head><title>SVG image embedding</title><link rel="icon" href="data:,"></head><body style="background:#0b0c0c"><img alt="Animated" width="256" height="256" src="/api/v1/avatar?name=motion-test&shape=round&expression=idle"><img alt="Static" width="256" height="256" src="/api/v1/avatar?name=motion-test&shape=round&expression=idle&animate=false"></body></html>',
+    }),
   );
+  await page.goto('/__e2e__/svg-images');
   const animated = page.getByAltText('Animated'),
     still = page.getByAltText('Static');
   await expect(animated).toBeVisible();
@@ -158,9 +169,17 @@ test('API SVG animates inside an image and static output stays still', async ({ 
   );
   const first = await animated.screenshot();
   const stillFirst = await still.screenshot();
-  await page.waitForTimeout(700);
-  expect((await animated.screenshot()).equals(first)).toBe(false);
+  // Breathing is subtle and blinks are deliberately irregular. Sample over a
+  // full breathing cycle instead of requiring two arbitrary frames to differ.
+  await expect
+    .poll(async () => !(await animated.screenshot({ animations: 'allow' })).equals(first), {
+      message: 'The API SVG should visibly animate when embedded in an image',
+      timeout: 10_000,
+      intervals: [200, 400, 800],
+    })
+    .toBe(true);
   expect((await still.screenshot()).equals(stillFirst)).toBe(true);
+  expect(errors).toEqual([]);
 });
 
 test('all shapes and expressions render valid SVG and create a visual contact sheet', async ({

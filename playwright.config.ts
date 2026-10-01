@@ -15,7 +15,10 @@ export default defineConfig({
     { name: 'webkit', use: { browserName: 'webkit' } },
   ],
   webServer: {
-    command: 'npm run dev -w @openavatars/web -- --port 3000',
+    // CI has already built the app in `npm run check`. Exercise that exact build.
+    command: process.env.CI
+      ? 'npm run start -w @openavatars/web -- --port 3000'
+      : 'npm run dev -w @openavatars/web -- --port 3000',
     url: 'http://localhost:3000',
     reuseExistingServer: !process.env.CI,
     timeout: 60_000,

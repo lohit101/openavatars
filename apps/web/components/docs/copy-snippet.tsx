@@ -1,9 +1,12 @@
 'use client';
 
+import { useHydrated } from '../../lib/use-hydrated';
+
 import { useEffect, useState } from 'react';
 import { Check, Copy } from '@phosphor-icons/react';
 
 export function CopySnippet({ code, label }: { code: string; label: string }) {
+  const hydrated = useHydrated();
   const [status, setStatus] = useState<'idle' | 'copied' | 'error'>('idle');
   useEffect(() => {
     if (status === 'idle') return;
@@ -27,7 +30,13 @@ export function CopySnippet({ code, label }: { code: string; label: string }) {
             ? 'Copied!'
             : ''}
       </span>
-      <button type="button" onClick={copy} aria-label={`Copy ${label}`} title={`Copy ${label}`}>
+      <button
+        disabled={!hydrated}
+        type="button"
+        onClick={copy}
+        aria-label={`Copy ${label}`}
+        title={`Copy ${label}`}
+      >
         {status === 'copied' ? <Check size={15} /> : <Copy size={15} />}
         <span>{status === 'copied' ? 'Copied' : 'Copy'}</span>
       </button>

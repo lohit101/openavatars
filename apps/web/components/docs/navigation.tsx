@@ -1,5 +1,7 @@
 'use client';
 
+import { useHydrated } from '../../lib/use-hydrated';
+
 import { useEffect, useRef, useState } from 'react';
 import { MagnifyingGlass, List, X, ArrowUpRight, GithubLogo } from '@phosphor-icons/react';
 
@@ -11,6 +13,7 @@ type NavigationItem = {
   searchText: string;
 };
 export function DocsNavigation({ items, groups }: { items: NavigationItem[]; groups: string[] }) {
+  const hydrated = useHydrated();
   const [query, setQuery] = useState('');
   const [active, setActive] = useState('overview');
   const [open, setOpen] = useState(false);
@@ -42,6 +45,7 @@ export function DocsNavigation({ items, groups }: { items: NavigationItem[]; gro
   return (
     <aside className="docs-sidebar" aria-label="Documentation navigation">
       <button
+        disabled={!hydrated}
         ref={mobileToggle}
         type="button"
         className="docs-mobile-toggle"
@@ -72,6 +76,7 @@ export function DocsNavigation({ items, groups }: { items: NavigationItem[]; gro
         <div className="docs-search">
           <MagnifyingGlass size={16} />
           <input
+            disabled={!hydrated}
             ref={input}
             type="search"
             value={query}
@@ -82,6 +87,7 @@ export function DocsNavigation({ items, groups }: { items: NavigationItem[]; gro
           />
           {query && (
             <button
+              disabled={!hydrated}
               type="button"
               onClick={() => {
                 setQuery('');

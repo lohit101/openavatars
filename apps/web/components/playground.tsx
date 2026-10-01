@@ -1,6 +1,7 @@
 'use client';
 
 import Link from 'next/link';
+import { useHydrated } from '../lib/use-hydrated';
 import { INSTALL_COMMAND, NPM_URL } from '../lib/package';
 import { useState, useEffect, useRef, useSyncExternalStore } from 'react';
 import { OpenAvatar } from 'openavatars/react';
@@ -101,6 +102,7 @@ function HighlightedCode({ code }: { code: string }) {
   );
 }
 function CopyButton({ value, label = 'Copy code' }: { value: string; label?: string }) {
+  const hydrated = useHydrated();
   const [status, setStatus] = useState<'idle' | 'copied' | 'error'>('idle');
   useEffect(() => {
     if (status === 'idle') return;
@@ -117,6 +119,7 @@ function CopyButton({ value, label = 'Copy code' }: { value: string; label?: str
   }
   return (
     <button
+      disabled={!hydrated}
       className="icon-button copy-button"
       onClick={copy}
       aria-label={status === 'copied' ? 'Copied' : label}
@@ -131,6 +134,7 @@ function CopyButton({ value, label = 'Copy code' }: { value: string; label?: str
 }
 
 export default function Playground() {
+  const hydrated = useHydrated();
   const [name, setName] = useState('jamie');
   const [animate, setAnimate] = useState(true);
   const [shape, setShape] = useState<Shape | ''>('');
@@ -266,6 +270,7 @@ export default function Playground() {
                   @
                 </span>
                 <input
+                  disabled={!hydrated}
                   ref={inputRef}
                   id="username"
                   value={name}
@@ -278,6 +283,7 @@ export default function Playground() {
                   spellCheck={false}
                 />
                 <button
+                  disabled={!hydrated}
                   className="icon-button"
                   onClick={randomize}
                   aria-label="Try a random username"
@@ -301,6 +307,7 @@ export default function Playground() {
             </div>
             <div className="playground-toolbar">
               <button
+                disabled={!hydrated}
                 className={`customize-button ${customize ? 'active' : ''}`}
                 aria-expanded={customize}
                 aria-controls="trait-controls"
@@ -312,6 +319,7 @@ export default function Playground() {
               <div className="motion-control">
                 <span id="motion-label">Animation</span>
                 <button
+                  disabled={!hydrated}
                   type="button"
                   role="switch"
                   aria-checked={animate}
@@ -323,6 +331,7 @@ export default function Playground() {
                 </button>
               </div>
               <button
+                disabled={!hydrated}
                 className="icon-button download-button"
                 onClick={download}
                 aria-label="Download SVG"
@@ -340,6 +349,7 @@ export default function Playground() {
                   <label>
                     Shape
                     <select
+                      disabled={!hydrated}
                       value={shape}
                       onChange={(event) => setShape(event.target.value as Shape | '')}
                     >
@@ -354,6 +364,7 @@ export default function Playground() {
                   <label>
                     Expression
                     <select
+                      disabled={!hydrated}
                       value={expression}
                       onChange={(event) => setExpression(event.target.value as Expression | '')}
                     >
@@ -371,6 +382,7 @@ export default function Playground() {
                   <div className="swatches">
                     {PALETTE.map((value) => (
                       <button
+                        disabled={!hydrated}
                         key={value}
                         className={`swatch ${traits.color === value ? 'selected' : ''}`}
                         style={{ background: value }}
@@ -382,9 +394,9 @@ export default function Playground() {
                   </div>
                 </div>
                 <button
+                  disabled={!hydrated || !customized}
                   className="text-button reset-button"
                   onClick={resetTraits}
-                  disabled={!customized}
                 >
                   <ArrowCounterClockwise size={14} /> Reset to your username
                 </button>
@@ -415,6 +427,7 @@ export default function Playground() {
               <div className="code-tabs" role="tablist" aria-label="Integration language">
                 {(['React', 'JavaScript', 'Image URL'] as const).map((tab) => (
                   <button
+                    disabled={!hydrated}
                     key={tab}
                     id={`tab-${tab.replace(' ', '-')}`}
                     role="tab"
@@ -495,6 +508,7 @@ export default function Playground() {
           <div className="avatar-wall">
             {PEOPLE.map((person) => (
               <button
+                disabled={!hydrated}
                 key={person}
                 className={`person ${name === person ? 'selected' : ''}`}
                 onClick={() => selectPerson(person)}
@@ -528,6 +542,7 @@ export default function Playground() {
           <div className="gallery-toolbar">
             <div className="segmented-control" role="group" aria-label="Collection view">
               <button
+                disabled={!hydrated}
                 aria-pressed={galleryMode === 'shapes'}
                 className={galleryMode === 'shapes' ? 'selected' : ''}
                 onClick={() => setGalleryMode('shapes')}
@@ -535,6 +550,7 @@ export default function Playground() {
                 Shapes <span>10</span>
               </button>
               <button
+                disabled={!hydrated}
                 aria-pressed={galleryMode === 'expressions'}
                 className={galleryMode === 'expressions' ? 'selected' : ''}
                 onClick={() => setGalleryMode('expressions')}
@@ -549,6 +565,7 @@ export default function Playground() {
           <div className={`trait-gallery ${galleryMode}`}>
             {(galleryMode === 'shapes' ? SHAPES : EXPRESSIONS).map((value, index) => (
               <button
+                disabled={!hydrated}
                 className="gallery-item"
                 key={value}
                 onClick={() => chooseTrait(value)}
@@ -716,6 +733,7 @@ export default function Playground() {
       <div className={`toast ${notice ? 'visible' : ''}`} role="status">
         {notice}
         <button
+          disabled={!hydrated}
           onClick={() => setNotice('')}
           aria-label="Dismiss notification"
           tabIndex={notice ? 0 : -1}
