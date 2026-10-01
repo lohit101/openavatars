@@ -152,7 +152,7 @@ npx playwright install chromium webkit
 npm run test:e2e
 ```
 
-The package check packs the real npm archive and installs it into isolated JavaScript, CommonJS, TypeScript, React 18, and React 19 consumers. Unit tests cover stable identities, Unicode normalization, overrides, serialization, React IDs, and the API contract. Browser tests cover controls, downloads, mobile layouts, reduced motion, eyelid animation, and standalone image animation in Chromium and WebKit. They generate desktop/mobile screenshots and a 140-combination contact sheet in `artifacts/` for visual review. CI runs the same checks.
+The package check packs the real npm archive and installs it into isolated JavaScript, CommonJS, TypeScript, React 18, and React 19 consumers. Unit tests cover stable identities, Unicode normalization, overrides, serialization, React IDs, and the API contract. Browser tests cover controls, downloads, mobile layouts, reduced motion, eyelid animation, and standalone image animation in Chromium and WebKit. They generate desktop/mobile screenshots and a 140-combination contact sheet in `artifacts/` for visual review. CI runs the full Chromium suite on Ubuntu 24.04 and the full WebKit suite on macOS 15 for Safari coverage. Both jobs are required to pass, including the image animation assertions.
 
 ## Deploy on Vercel
 

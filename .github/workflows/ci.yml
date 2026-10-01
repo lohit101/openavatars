@@ -6,7 +6,7 @@ permissions:
   contents: read
 jobs:
   check:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
@@ -16,11 +16,31 @@ jobs:
       - run: npm ci
       - run: npm run check
       - run: npm run test:package
-      - run: npx playwright install --with-deps chromium webkit
-      - run: npm run test:e2e
+      - run: npx playwright install --with-deps chromium
+      - run: npm run test:e2e -- --project=chromium
       - uses: actions/upload-artifact@v4
         if: always()
         with:
-          name: visual-review
+          name: visual-review-chromium
+          path: artifacts/
+          retention-days: 7
+  webkit:
+    # Safari coverage uses native macOS WebKit. Linux's image animation rendering
+    # differs even when the same SVG's inline CSS animations work correctly.
+    runs-on: macos-15
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci
+      - run: npm run build
+      - run: npx playwright install webkit
+      - run: npm run test:e2e -- --project=webkit
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: visual-review-webkit
           path: artifacts/
           retention-days: 7
