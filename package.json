@@ -16,6 +16,7 @@
     "lint": "eslint .",
     "check": "npm run lint && npm run typecheck && npm test && npm run build",
     "test:e2e": "npm run build:packages && playwright test",
+    "diagnose:svg": "npm run build:packages && node --import tsx scripts/diagnose-svg-motion.ts",
     "pack:package": "node scripts/pack-package.mjs",
     "test:package": "node scripts/test-package.mjs",
     "release:check": "npm run check && npm run test:package",

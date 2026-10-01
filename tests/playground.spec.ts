@@ -1,4 +1,6 @@
 import { test, expect } from '@playwright/test';
+import { arch, release } from 'node:os';
+import { SVG_MOTION_PROBE } from '../scripts/svg-motion-probe';
 import {
   generateAvatar,
   renderAvatarSvg,
@@ -145,7 +147,9 @@ test('eyelids actually close and disabling animation restores the face', async (
   await expect(page.locator('.oa-lid').first()).toHaveCSS('transform', 'none');
 });
 
-test('API SVG animates inside an image and static output stays still', async ({ page }) => {
+test('API SVG animates inside an image and static output stays still', async ({
+  page,
+}, testInfo) => {
   const errors: string[] = [];
   page.on('pageerror', (error) => errors.push(error.message));
   page.on('console', (message) => {
@@ -160,6 +164,14 @@ test('API SVG animates inside an image and static output stays still', async ({ 
       body: '<!doctype html><html lang="en"><head><title>SVG image embedding</title><link rel="icon" href="data:,"></head><body style="background:#0b0c0c"><img alt="Animated" width="256" height="256" src="/api/v1/avatar?name=motion-test&shape=round&expression=idle"><img alt="Static" width="256" height="256" src="/api/v1/avatar?name=motion-test&shape=round&expression=idle&animate=false"></body></html>',
     }),
   );
+  const avatarResponse = page.waitForResponse((response) => {
+    const url = new URL(response.url());
+    return (
+      url.pathname === '/api/v1/avatar' &&
+      url.searchParams.get('name') === 'motion-test' &&
+      !url.searchParams.has('animate')
+    );
+  });
   await page.goto('/__e2e__/svg-images');
   const animated = page.getByAltText('Animated'),
     still = page.getByAltText('Static');
@@ -167,6 +179,61 @@ test('API SVG animates inside an image and static output stays still', async ({ 
   await page.waitForFunction(() =>
     [...document.images].every((img) => img.complete && img.naturalWidth > 0),
   );
+  const responseHeaders = await (await avatarResponse).allHeaders();
+  // A static color probe tests the embedded SVG's media query, rather than
+  // assuming page.emulateMedia reaches WebKit's separate image document.
+  await page.route('**/__e2e__/svg-motion-preference.svg', (route) =>
+    route.fulfill({
+      contentType: responseHeaders['content-type'],
+      headers: {
+        'Content-Security-Policy': responseHeaders['content-security-policy'],
+        'X-Content-Type-Options': responseHeaders['x-content-type-options'],
+      },
+      body: SVG_MOTION_PROBE,
+    }),
+  );
+  const imageMotionPixel = await page.evaluate(async () => {
+    const image = new Image(1, 1);
+    image.alt = 'SVG motion preference probe';
+    image.style.cssText = 'position:fixed;right:0;bottom:0';
+    const loaded = new Promise<void>((resolve, reject) => {
+      image.onload = () => resolve();
+      image.onerror = () => reject(new Error('SVG motion preference probe failed to load.'));
+    });
+    image.src = '/__e2e__/svg-motion-preference.svg';
+    document.body.append(image);
+    try {
+      await loaded;
+      const canvas = document.createElement('canvas');
+      canvas.width = canvas.height = 1;
+      const context = canvas.getContext('2d')!;
+      context.drawImage(image, 0, 0, 1, 1);
+      return Array.from(context.getImageData(0, 0, 1, 1).data);
+    } finally {
+      image.remove();
+    }
+  });
+  await testInfo.attach('svg-image-environment', {
+    contentType: 'application/json',
+    body: JSON.stringify(
+      {
+        os: { platform: process.platform, release: release(), arch: arch() },
+        browser: page.context().browser()?.version(),
+        imageMotionPixel,
+        hostReducedMotion: await page.evaluate(
+          () => matchMedia('(prefers-reduced-motion:reduce)').matches,
+        ),
+        contentType: responseHeaders['content-type'],
+        csp: responseHeaders['content-security-policy'],
+      },
+      null,
+      2,
+    ),
+  });
+  expect(
+    imageMotionPixel,
+    'Embedded SVG images must see no reduced motion (green). On macOS CI, disable native Reduce Motion before WebKit launches; host media emulation alone does not reach image documents.',
+  ).toEqual([0, 255, 0, 255]);
   const first = await animated.screenshot();
   const stillFirst = await still.screenshot();
   // Breathing is subtle and blinks are deliberately irregular. Sample over a

@@ -37,9 +37,11 @@ On macOS, install `webkit` and run `--project=webkit` for Safari coverage. To ru
 
 ## Reproduce GitHub Actions
 
-CI runs the complete Chromium suite on Ubuntu 24.04 (`check`) and the complete WebKit suite on macOS 15 (`webkit`). Both jobs must pass before a package release. WebKit on macOS is the project's Safari gate; Linux's WebKit image renderer can differ from native macOS behavior. See [Playwright's WebKit platform guidance](https://playwright.dev/docs/browsers#webkit).
+CI runs the complete Chromium suite on Ubuntu 24.04 (`check`) and the complete WebKit suite on macOS 15 (`webkit`). Both jobs must pass before a package release. WebKit on macOS is the project's Safari gate, following [Playwright's WebKit platform guidance](https://playwright.dev/docs/browsers#webkit). A browser-specific failure needs a reproduction; changing the operating system does not establish or fix its cause.
 
 CI tests the production build. With `CI=true`, Playwright starts the production server and requires a prior build; `test:e2e` alone only rebuilds the package workspaces.
+
+GitHub's [macOS runner setup](https://raw.githubusercontent.com/actions/runner-images/main/images/macos/scripts/build/configure-system.sh) enables native Reduce Motion. The WebKit job disables that preference on its temporary runner before launching browsers and verifies the value. Embedded SVG images use an internal document that can read the native preference instead of Playwright's host-page media override. The image E2E test checks the embedded preference with a static color probe before asserting visible motion. Production avatars still honor reduced motion, and the separate reduced-motion test remains enabled. A local run with native Reduce Motion enabled can therefore stop at the environment assertion; use a disposable test environment with native Reduce Motion off when testing animation rather than changing the generator's accessibility behavior.
 
 ```sh
 # Ubuntu: match the Chromium browser job
@@ -59,6 +61,10 @@ CI=true npm run test:e2e -- --project=webkit
 ```
 
 Download the matching `visual-review-chromium` or `visual-review-webkit` Actions artifact when a test fails. Each job uploads its screenshots and available failure traces. Open a downloaded trace with `npx playwright show-trace /path/to/trace.zip`; use the failing assertion and screenshot to distinguish a behavior regression from a platform or timing issue. Browser failures remain release blockers.
+
+For an SVG image animation failure, run `npm run diagnose:svg -- --browser=webkit` (or `--browser=chromium`). This comparison uses the real API handler's SVG and CSP, identical SVGs without CSP and without the reduced-motion block, minimal CSS and SVG attribute animations, static output, and an inline avatar. It needs no Next server. The JSON report, screenshots, and trace are saved under `artifacts/svg-motion-diagnostic/<browser>/`. Static color probes check whether CSS applies and whether the embedded image sees reduced motion; the host's emulated media setting alone does not prove the embedded SVG uses it. Diagnostic variants do not change the production generator or the E2E assertions. Add `--headful` to compare a visible browser, or `--fixtures-only` to write a local HTML preview without launching one; the preview's data URLs cannot reproduce response CSP.
+
+Also run `npm run diagnose:svg -- --browser=webkit --isolated` when the comparison page animates but the E2E image pair freezes. This mode first samples just the animated/static image pair, then adds a visible host CSS animation on the same page and samples again. Its separate report and trace are saved under `artifacts/svg-motion-diagnostic/webkit/isolated/`. The comparison page contains other animations and cannot by itself prove that an embedded avatar schedules rendering independently. Neither mode replaces the real API E2E gate.
 
 ## Keep documentation and releases aligned
 

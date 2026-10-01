@@ -25,8 +25,7 @@ jobs:
           path: artifacts/
           retention-days: 7
   webkit:
-    # Safari coverage uses native macOS WebKit. Linux's image animation rendering
-    # differs even when the same SVG's inline CSS animations work correctly.
+    # macOS WebKit provides the project's Safari coverage.
     runs-on: macos-15
     steps:
       - uses: actions/checkout@v4
@@ -37,7 +36,17 @@ jobs:
       - run: npm ci
       - run: npm run build
       - run: npx playwright install webkit
-      - run: npm run test:e2e -- --project=webkit
+      - name: Enable native motion for SVG image coverage
+        # GitHub's macOS image enables Reduce Motion. WebKit SVG image documents
+        # read the native preference instead of the host's emulated media value.
+        run: |
+          defaults write com.apple.universalaccess reduceMotion -bool false
+          test "$(defaults read com.apple.universalaccess reduceMotion)" = "0"
+      - id: webkit_e2e
+        run: npm run test:e2e -- --project=webkit
+      - name: Diagnose isolated SVG rendering after a failure
+        if: failure() && steps.webkit_e2e.outcome == 'failure'
+        run: npm run diagnose:svg -- --browser=webkit --isolated
       - uses: actions/upload-artifact@v4
         if: always()
         with:

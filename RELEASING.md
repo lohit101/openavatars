@@ -69,6 +69,8 @@ CI=true npm run test:e2e -- --project=webkit
 
 Use macOS for the project's Safari release gate. Read [CONTRIBUTING.md](CONTRIBUTING.md) for local development and browser platform details. Both suites retain their animation assertions. CI uploads `visual-review-chromium` and `visual-review-webkit` artifacts containing review screenshots and failure traces when present. Inspect the failing test, screenshot, and trace before changing behavior or assertions.
 
+The WebKit job sets native Reduce Motion off on its temporary runner before browser launch. Its SVG image test verifies the embedded document's motion preference as well as visible animation. Preserve this setup: GitHub enables native Reduce Motion by default, and WebKit's image document can ignore the host-page media override. See [CONTRIBUTING.md](CONTRIBUTING.md) for the source and diagnostic commands; production avatars continue to respect accessibility preferences.
+
 After both jobs pass, confirm `HEAD` is that reviewed commit, then create and push an annotated release tag:
 
 ```sh
