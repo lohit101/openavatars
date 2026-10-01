@@ -9,6 +9,14 @@ npm run dev
 
 The public npm package is `openavatars` in `packages/core`. Its root generator stays independent of browsers, React, external assets, and runtime dependencies. The optional component lives at `openavatars/react`. `packages/react` is a private compatibility adapter for earlier workspace imports; do not publish it separately.
 
+## Choose and coordinate work
+
+The [roadmap](ROADMAP.md) describes upcoming milestones, their completion criteria, and approachable starting tasks. Its version targets are tentative; supported features live in the [README](README.md), and shipped changes live in the [changelog](CHANGELOG.md).
+
+Search [existing issues](https://github.com/lohit101/openavatars/issues) before starting substantial work. Propose or claim a task in an issue with its use case, scope, completion criteria, and impact on existing identities or APIs. Discuss substantial API, recipe-format, and identity changes with a maintainer before implementation. Include a reproduction for bugs or small-size screenshots for visual proposals. Focused fixes and documentation corrections can go straight to a pull request.
+
+Good first contributions include reproduction examples, framework recipes, small-size visual reviews, documentation improvements, and reproducible benchmarks. When an accepted roadmap task starts or ships, update its status and link the tracking issue, pull request, or release. Review priorities at each release.
+
 ## Preserve identities and visual behavior
 
 Keep the v1 name-to-trait algorithm stable. Changes to hashing, random-value order, normalization, trait lists, shape geometry, or expression geometry can change existing identities. Add regression coverage for relevant fixes. Intentional identity changes need explicit algorithm versioning and migration guidance; the npm package version and the `/api/v1/avatar` route are separate contracts.

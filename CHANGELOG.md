@@ -6,6 +6,7 @@ This file records package releases and relevant repository maintenance. **Unrele
 
 ### Website, testing, and documentation
 
+- Added a contributor roadmap for personality and reactions, portable characters, exports, new collections, and the path to 1.0, with identity compatibility rules and maintenance criteria.
 - Playground and documentation controls wait for hydration before accepting input.
 - Hydration regression tests cover the playground and documentation. Standalone SVG image tests use an isolated page and wait for visible animation.
 - CI tests the production build, running the full Chromium suite on Ubuntu 24.04 and the full WebKit suite on macOS 15. Each browser job uploads separate review artifacts.

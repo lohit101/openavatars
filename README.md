@@ -4,7 +4,7 @@ Little faces. Big personalities.
 
 Free, open source, animated SVG avatars generated from any username. Ten soft silhouettes, fourteen eye expressions, a pastel palette, and small seeded variations give every name a little character. Use them in apps, dashboards, comment threads, or wherever initials need a friend.
 
-[View on npm](https://www.npmjs.com/package/openavatars) · [Changelog](CHANGELOG.md) · [Release guide](RELEASING.md)
+[View on npm](https://www.npmjs.com/package/openavatars) · [Roadmap](ROADMAP.md) · [Changelog](CHANGELOG.md) · [Release guide](RELEASING.md)
 
 ## Install
 
